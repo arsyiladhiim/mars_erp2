@@ -1,0 +1,104 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: mars_erp_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      - CONTAINER_ROLE=app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mars_erp
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: mars_erp_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mars_erp
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: mars_erp_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mars_erp
+
+  nginx:
+    image: nginx:alpine
+    container_name: mars_erp_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - mars_erp
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: mars_erp_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-mars_erp}
+      POSTGRES_USER: ${DB_USERNAME:-mars_erp}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/postgres/data_:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-mars_erp} -d ${DB_DATABASE:-mars_erp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mars_erp
+
+  redis:
+    image: redis:7-alpine
+    container_name: mars_erp_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./docker/redis/data_:/data
+    networks:
+      - mars_erp
+
+networks:
+  mars_erp:
+    driver: bridge

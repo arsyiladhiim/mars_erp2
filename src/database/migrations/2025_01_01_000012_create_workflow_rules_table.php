@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('workflow_rules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('company_id')->constrained('core_companies')->cascadeOnDelete();
+            $table->string('name');
+            $table->string('document_type'); // purchase_order, purchase_request, sales_order, ...
+            $table->json('conditions')->nullable(); // amount range, department, branch, project, item_category
+            $table->unsignedInteger('priority')->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('workflow_rules');
+    }
+};

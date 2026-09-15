@@ -1,0 +1,7 @@
+# Environment (docker-compose variable interpolation - contains DB_PASSWORD)
+/.env
+
+# Bind-mounted database data (Postgres cluster files / Redis dump) — never commit.
+# These are live binary state, re-created automatically on `docker compose up`.
+/docker/postgres/data_/
+/docker/redis/data_/
