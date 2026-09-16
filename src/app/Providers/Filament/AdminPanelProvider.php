@@ -7,12 +7,16 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Icons\Heroicon;
 use Filament\Support\Colors\Color;
 use App\Filament\Widgets\ExecutiveOverviewWidget;
 use App\Filament\Widgets\PendingApprovalsWidget;
+use App\Filament\Widgets\PurchaseVsSalesChartWidget;
+use App\Filament\Widgets\SalesTrendChartWidget;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -31,10 +35,16 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('MarsERP')
+            ->brandLogo(asset('images/marserp-logo.png'))
+            ->brandLogoHeight('2rem')
+            ->favicon(asset('images/marserp-favicon.png'))
             ->login()
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => Color::hex('#B47854'),
+                'gray' => Color::hex('#3C3C48'),
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->darkMode(false)
             ->navigationGroups([
                 'Master Data',
                 'Purchasing',
@@ -44,8 +54,15 @@ class AdminPanelProvider extends PanelProvider
                 'Asset',
                 'Productivity',
                 'Helpdesk',
+                'AI & Automation',
                 'Reports',
                 'Administration',
+            ])
+            ->navigationItems([
+                NavigationItem::make('ERP AI')
+                    ->icon(Heroicon::OutlinedSparkles)
+                    ->group('AI & Automation')
+                    ->url('/ai', shouldOpenInNewTab: true),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -56,6 +73,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 ExecutiveOverviewWidget::class,
+                SalesTrendChartWidget::class,
+                PurchaseVsSalesChartWidget::class,
                 PendingApprovalsWidget::class,
                 FilamentInfoWidget::class,
             ])

@@ -2,6 +2,7 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerInvoice extends Model
 {
-    use SoftDeletes;
+    use HasAuditTrail, SoftDeletes;
 
     protected $table = 'sales_customer_invoices';
 

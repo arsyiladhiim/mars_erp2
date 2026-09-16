@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SupplierInvoices;
 use App\Filament\Resources\SupplierInvoices\Pages\CreateSupplierInvoice;
 use App\Filament\Resources\SupplierInvoices\Pages\EditSupplierInvoice;
 use App\Filament\Resources\SupplierInvoices\Pages\ListSupplierInvoices;
+use App\Filament\Resources\SupplierInvoices\Pages\ViewSupplierInvoice;
 use App\Filament\Resources\SupplierInvoices\Schemas\SupplierInvoiceForm;
 use App\Filament\Resources\SupplierInvoices\Tables\SupplierInvoicesTable;
 use App\Models\Finance\SupplierInvoice;
@@ -46,6 +47,7 @@ class SupplierInvoiceResource extends Resource
         return [
             'index' => ListSupplierInvoices::route('/'),
             'create' => CreateSupplierInvoice::route('/create'),
+            'view' => ViewSupplierInvoice::route('/{record}'),
             'edit' => EditSupplierInvoice::route('/{record}/edit'),
         ];
     }

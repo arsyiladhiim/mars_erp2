@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Ai\AiConversation;
 use App\Models\Core\Branch;
 use App\Models\Core\Company;
 use App\Models\Core\Department;
@@ -60,5 +61,10 @@ class User extends Authenticatable implements FilamentUser
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function aiConversations()
+    {
+        return $this->hasMany(AiConversation::class);
     }
 }

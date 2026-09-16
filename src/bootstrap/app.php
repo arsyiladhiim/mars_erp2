@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // The "ERP AI" full-page chat lives outside the Filament panel but shares
+        // its session/guard — send unauthenticated visitors to the panel login.
+        $middleware->redirectGuestsTo(fn () => route('filament.admin.auth.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

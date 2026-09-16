@@ -2,6 +2,7 @@
 
 namespace App\Models\Finance;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Inventory\GoodsReceipt;
 use App\Models\Master\BusinessPartner;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SupplierInvoice extends Model
 {
-    use SoftDeletes;
+    use HasAuditTrail, SoftDeletes;
 
     protected $table = 'finance_supplier_invoices';
 

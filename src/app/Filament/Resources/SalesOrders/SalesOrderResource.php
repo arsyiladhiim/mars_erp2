@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SalesOrders;
 use App\Filament\Resources\SalesOrders\Pages\CreateSalesOrder;
 use App\Filament\Resources\SalesOrders\Pages\EditSalesOrder;
 use App\Filament\Resources\SalesOrders\Pages\ListSalesOrders;
+use App\Filament\Resources\SalesOrders\Pages\ViewSalesOrder;
 use App\Filament\Resources\SalesOrders\Schemas\SalesOrderForm;
 use App\Filament\Resources\SalesOrders\Tables\SalesOrdersTable;
 use App\Models\Sales\SalesOrder;
@@ -46,6 +47,7 @@ class SalesOrderResource extends Resource
         return [
             'index' => ListSalesOrders::route('/'),
             'create' => CreateSalesOrder::route('/create'),
+            'view' => ViewSalesOrder::route('/{record}'),
             'edit' => EditSalesOrder::route('/{record}/edit'),
         ];
     }

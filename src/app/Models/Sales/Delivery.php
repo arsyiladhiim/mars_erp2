@@ -2,6 +2,7 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
 use App\Models\Master\Warehouse;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Delivery extends Model
 {
-    use SoftDeletes;
+    use HasAuditTrail, SoftDeletes;
 
     protected $table = 'sales_deliveries';
 

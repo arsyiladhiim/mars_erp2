@@ -141,7 +141,27 @@ Login: `admin@marserp.test` / `password`.
 
 Not yet done (tracked for the next, backend-hardening pass): per-resource policy registration for
 non-super-admin roles, REST API (`/api/v1/*`, PRD §33), approval-workflow execution engine,
-accounting-posting/stock-ledger automation, AI assistant, CRM/HR/Project modules.
+accounting-posting/stock-ledger automation, AI ERP tool-calling, CRM/HR/Project modules.
+
+## Status (2026-09-15) — visual polish + AI Assistant pass
+
+- **Custom Filament theme** compiled and live (copper/slate brand palette from the supplied logo,
+  logo/favicon wired via `->brandLogo()`/`->favicon()`, roomier cards/sidebar, dark mode disabled).
+  See ARCHITECTURE-DECISIONS.md #9.
+- **Two dashboard `ChartWidget`s** added (Sales Trend line chart, Purchasing vs Sales bar chart),
+  reading real seeded data.
+- **AI Provider settings** (`Administration → AI Providers`): multi-provider CRUD, encrypted API
+  key, masked in the table, "only one active" enforced at the model layer. See decision #10.
+- **"ERP AI" full-page chat** at `/ai` (own layout, outside the panel, opens in a new tab from a
+  new "AI & Automation" nav group): real OpenAI-compatible streaming chat, conversation history
+  persisted per user (`ai_conversations`/`ai_messages`). Verified end-to-end against a local mock
+  SSE server. See decisions #10–11 for the Guzzle `StreamHandler` + nginx buffering fix that real
+  streaming required.
+- **Infolist "View" pages** added for the 6 core transactional documents (PO, GR, Supplier
+  Invoice, SO, Delivery, Customer Invoice) — Header/Lines/Totals/Attachments/Activity. See
+  decision #12.
+- Old orphaned Docker named volumes removed; Postgres/Redis now bind-mount to
+  `docker/postgres/data_/` and `docker/redis/data_/` (gitignored).
 
 ## Execution order for this build
 

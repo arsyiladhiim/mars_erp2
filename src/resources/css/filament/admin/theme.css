@@ -1,0 +1,65 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+
+/*
+ * MarsERP brand theme — light, clean, "Linear/Notion"-style whitespace.
+ * Primary/gray shade scales themselves are generated in AdminPanelProvider
+ * via Color::hex() from the brand logo's sampled colors:
+ *   copper/terracotta #B47854 (primary)
+ *   charcoal slate    #3C3C48 (gray)
+ * This file only carries layout/spacing/typography refinements that Filament's
+ * color API can't express.
+ */
+
+:root {
+    --default-font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Roomier cards & sections — more breathing room between content blocks. */
+.fi-section {
+    --section-content-padding: 1.5rem;
+}
+
+.fi-section-header {
+    padding-bottom: 0.75rem;
+}
+
+/* Slightly larger corner radius across cards/panels/inputs for a softer, modern feel. */
+.fi-section,
+.fi-modal-window,
+.fi-dropdown-panel,
+.fi-input-wrp {
+    border-radius: 0.75rem;
+}
+
+/* Sidebar: a touch more breathing room around nav items and the brand/logo header. */
+.fi-sidebar-header {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+}
+
+.fi-sidebar-nav {
+    gap: 0.375rem;
+}
+
+.fi-sidebar-item-button {
+    border-radius: 0.5rem;
+}
+
+/* Stat / chart widgets: subtle shadow + hover lift for a more premium dashboard feel. */
+.fi-wi-stats-overview-stat,
+.fi-wi-chart {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
+    transition: box-shadow 150ms ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    box-shadow: 0 4px 10px 0 rgb(0 0 0 / 0.06), 0 2px 4px 0 rgb(0 0 0 / 0.08);
+}
+
+/* Topbar: crisp bottom border instead of default flat look. */
+.fi-topbar nav {
+    border-bottom-width: 1px;
+}

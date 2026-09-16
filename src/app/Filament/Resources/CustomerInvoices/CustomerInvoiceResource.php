@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CustomerInvoices;
 use App\Filament\Resources\CustomerInvoices\Pages\CreateCustomerInvoice;
 use App\Filament\Resources\CustomerInvoices\Pages\EditCustomerInvoice;
 use App\Filament\Resources\CustomerInvoices\Pages\ListCustomerInvoices;
+use App\Filament\Resources\CustomerInvoices\Pages\ViewCustomerInvoice;
 use App\Filament\Resources\CustomerInvoices\Schemas\CustomerInvoiceForm;
 use App\Filament\Resources\CustomerInvoices\Tables\CustomerInvoicesTable;
 use App\Models\Sales\CustomerInvoice;
@@ -46,6 +47,7 @@ class CustomerInvoiceResource extends Resource
         return [
             'index' => ListCustomerInvoices::route('/'),
             'create' => CreateCustomerInvoice::route('/create'),
+            'view' => ViewCustomerInvoice::route('/{record}'),
             'edit' => EditCustomerInvoice::route('/{record}/edit'),
         ];
     }

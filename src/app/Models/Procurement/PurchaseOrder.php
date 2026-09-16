@@ -2,6 +2,7 @@
 
 namespace App\Models\Procurement;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Branch;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseOrder extends Model
 {
-    use SoftDeletes;
+    use HasAuditTrail, SoftDeletes;
 
     protected $table = 'procurement_purchase_orders';
 
