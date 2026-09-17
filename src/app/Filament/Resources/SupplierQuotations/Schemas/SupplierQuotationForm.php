@@ -20,7 +20,11 @@ class SupplierQuotationForm
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
                     Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()
                         ->required()->label('Supplier'),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('rfq_id')->relationship('rfq', 'number')->searchable(),
                     DatePicker::make('validity_date'),
                     TextInput::make('lead_time_days')->numeric()->suffix('days'),

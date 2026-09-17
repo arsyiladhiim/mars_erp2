@@ -21,7 +21,11 @@ class JournalEntryForm
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
                     Select::make('accounting_period_id')->relationship('accountingPeriod', 'name')->searchable()
                         ->required(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     DatePicker::make('entry_date')->required(),
                     Select::make('source_type')->options([
                         'manual' => 'Manual', 'goods_receipt' => 'Goods Receipt',
@@ -32,7 +36,8 @@ class JournalEntryForm
                     ])->default('manual')->required(),
                     Select::make('status')->options([
                         'draft' => 'Draft', 'posted' => 'Posted', 'reversed' => 'Reversed',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via the Post action.'),
                     Textarea::make('memo')->rows(2)->columnSpanFull(),
                 ]),
             Section::make('Journal Lines')

@@ -2,6 +2,8 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Branch;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SalesQuotation extends Model
 {
-    use SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'sales_quotations';
 
@@ -45,5 +47,10 @@ class SalesQuotation extends Model
     public function lines()
     {
         return $this->hasMany(SalesQuotationLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'sales_quotation';
     }
 }

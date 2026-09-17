@@ -21,13 +21,18 @@ class GoodsReceiptForm
                     Select::make('purchase_order_id')->relationship('purchaseOrder', 'number')->searchable(),
                     Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()
                         ->label('Supplier'),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('warehouse_id')->relationship('warehouse', 'name')->searchable()->required(),
                     DatePicker::make('receipt_date')->required(),
                     TextInput::make('supplier_reference')->label('DO / Surat Jalan No.')->maxLength(100),
                     Select::make('status')->options([
                         'draft' => 'Draft', 'posted' => 'Posted', 'cancelled' => 'Cancelled',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via the Post action.'),
                 ]),
             Section::make('Received Items')
                 ->components([

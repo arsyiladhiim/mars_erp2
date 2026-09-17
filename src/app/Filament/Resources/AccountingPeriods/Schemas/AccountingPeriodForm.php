@@ -23,8 +23,8 @@ class AccountingPeriodForm
                 'review' => 'Review',
                 'closed' => 'Closed',
                 'locked' => 'Locked',
-            ])->default('open')->required()
-                ->helperText('Closed/locked periods cannot receive new postings (PRD §11.7, Key Rule #5).'),
+            ])->default('open')->required()->disabled()->dehydrated()
+                ->helperText('Closed/locked periods cannot receive new postings (PRD §11.7, Key Rule #5). Managed via the Close Period / Reopen Period actions.'),
         ])->columns(2);
     }
 }

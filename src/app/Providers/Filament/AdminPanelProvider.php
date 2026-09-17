@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->darkMode(false)
             ->navigationGroups([
+                'Approvals',
                 'Master Data',
                 'Purchasing',
                 'Inventory',

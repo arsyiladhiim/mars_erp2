@@ -23,7 +23,11 @@ class SalesOrderForm
                         ->required()->label('Customer'),
                     Select::make('sales_quotation_id')->relationship('salesQuotation', 'number')->searchable(),
                     Select::make('warehouse_id')->relationship('warehouse', 'name')->searchable(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     DatePicker::make('order_date')->required(),
                     DatePicker::make('delivery_date'),
                     TextInput::make('payment_term_days')->numeric()->suffix('days'),
@@ -33,7 +37,8 @@ class SalesOrderForm
                         'approved' => 'Approved', 'partially_delivered' => 'Partially Delivered',
                         'delivered' => 'Delivered', 'closed' => 'Closed', 'cancelled' => 'Cancelled',
                         'rejected' => 'Rejected',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via Submit for Approval / the approvals inbox / Delivery posting.'),
                 ]),
             Section::make('Lines')
                 ->components([

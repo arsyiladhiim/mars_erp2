@@ -18,7 +18,12 @@ class StockOpnamesTable
                 TextColumn::make('number')->searchable()->sortable(),
                 TextColumn::make('warehouse.name'),
                 TextColumn::make('count_date')->date()->sortable(),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'posted', 'approved' => 'success',
+                    'cancelled' => 'danger',
+                    'pending_approval', 'counting' => 'warning',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

@@ -22,7 +22,11 @@ class SalesQuotationForm
                     Select::make('branch_id')->relationship('branch', 'name')->searchable(),
                     Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()
                         ->required()->label('Customer'),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     DatePicker::make('quotation_date')->required(),
                     DatePicker::make('validity_date'),
                     TextInput::make('currency')->default('IDR')->maxLength(3),

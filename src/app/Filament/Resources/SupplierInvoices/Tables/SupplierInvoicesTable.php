@@ -22,7 +22,12 @@ class SupplierInvoicesTable
                 TextColumn::make('due_date')->date(),
                 TextColumn::make('grand_total')->money('IDR'),
                 TextColumn::make('paid_amount')->money('IDR')->toggleable(),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'paid', 'posted', 'approved' => 'success',
+                    'cancelled' => 'danger',
+                    'pending_approval', 'partially_paid' => 'warning',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

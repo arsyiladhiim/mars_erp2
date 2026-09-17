@@ -2,12 +2,16 @@
 
 namespace App\Models\Finance;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\AccountingPeriod;
 use App\Models\Core\Company;
 use Illuminate\Database\Eloquent\Model;
 
 class JournalEntry extends Model
 {
+    use GeneratesDocumentNumber, HasAuditTrail;
+
     protected $table = 'finance_journal_entries';
 
     protected $fillable = [
@@ -50,5 +54,10 @@ class JournalEntry extends Model
     public function isBalanced(): bool
     {
         return bccomp((string) $this->total_debit, (string) $this->total_credit, 2) === 0;
+    }
+
+    public static function documentType(): string
+    {
+        return 'journal_entry';
     }
 }

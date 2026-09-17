@@ -2,6 +2,7 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
 use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Delivery extends Model
 {
-    use HasAuditTrail, SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'sales_deliveries';
 
@@ -45,5 +46,10 @@ class Delivery extends Model
     public function lines()
     {
         return $this->hasMany(DeliveryLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'delivery';
     }
 }

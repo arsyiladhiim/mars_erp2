@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Tickets\Schemas;
 
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +26,10 @@ class TicketForm
                     Select::make('priority')->options([
                         'low' => 'Low', 'medium' => 'Medium', 'high' => 'High', 'urgent' => 'Urgent',
                     ])->default('medium')->required(),
-                    TextInput::make('sla_hours')->numeric()->suffix('hours'),
+                    TextInput::make('sla_hours')->numeric()->suffix('hours')
+                        ->helperText('Due date is computed automatically from this.'),
+                    DateTimePicker::make('due_at')->disabled()->dehydrated()
+                        ->helperText('Computed from SLA hours.'),
                     Select::make('related_customer_id')->relationship('relatedCustomer', 'name')->searchable(),
                     Select::make('status')->options([
                         'open' => 'Open', 'assigned' => 'Assigned', 'in_progress' => 'In Progress',

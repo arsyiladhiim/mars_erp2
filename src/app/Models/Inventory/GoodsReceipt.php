@@ -2,6 +2,7 @@
 
 namespace App\Models\Inventory;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
 use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GoodsReceipt extends Model
 {
-    use HasAuditTrail, SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'inventory_goods_receipts';
 
@@ -46,5 +47,10 @@ class GoodsReceipt extends Model
     public function lines()
     {
         return $this->hasMany(GoodsReceiptLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'goods_receipt';
     }
 }

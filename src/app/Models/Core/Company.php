@@ -2,13 +2,14 @@
 
 namespace App\Models\Core;
 
+use App\Models\Concerns\HasAuditTrail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasAuditTrail, HasFactory, SoftDeletes;
 
     protected $table = 'core_companies';
 

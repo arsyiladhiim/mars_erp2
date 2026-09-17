@@ -22,14 +22,19 @@ class CustomerInvoiceForm
                         ->required()->label('Customer'),
                     Select::make('sales_order_id')->relationship('salesOrder', 'number')->searchable(),
                     Select::make('delivery_id')->relationship('delivery', 'number')->searchable(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     DatePicker::make('invoice_date')->required(),
                     DatePicker::make('due_date'),
                     TextInput::make('currency')->default('IDR')->maxLength(3),
                     Select::make('status')->options([
                         'draft' => 'Draft', 'posted' => 'Posted', 'partially_paid' => 'Partially Paid',
                         'paid' => 'Paid', 'overdue' => 'Overdue', 'cancelled' => 'Cancelled',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via the Post action / Incoming Payment posting.'),
                 ]),
             Section::make('Lines')
                 ->components([

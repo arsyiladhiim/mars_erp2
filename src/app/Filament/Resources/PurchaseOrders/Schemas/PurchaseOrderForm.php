@@ -19,7 +19,11 @@ class PurchaseOrderForm
                 ->components([
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
                     Select::make('branch_id')->relationship('branch', 'name')->searchable(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()
                         ->required()->label('Supplier'),
                     Select::make('supplier_quotation_id')->relationship('supplierQuotation', 'number')
@@ -34,7 +38,8 @@ class PurchaseOrderForm
                         'approved' => 'Approved', 'sent' => 'Sent', 'partially_received' => 'Partially Received',
                         'received' => 'Received', 'closed' => 'Closed', 'cancelled' => 'Cancelled',
                         'rejected' => 'Rejected',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via Submit for Approval / the approvals inbox / Goods Receipt posting.'),
                 ]),
             Section::make('Lines')
                 ->components([

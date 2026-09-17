@@ -22,7 +22,15 @@ class TicketsTable
                 TextColumn::make('priority')->badge()->color(fn (string $state) => match ($state) {
                     'urgent' => 'danger', 'high' => 'warning', 'medium' => 'info', default => 'gray',
                 }),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('due_at')
+                    ->label('SLA Due')
+                    ->dateTime()
+                    ->placeholder('—')
+                    ->color(fn ($record) => $record->isOverdue() ? 'danger' : null),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'resolved', 'closed' => 'success',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

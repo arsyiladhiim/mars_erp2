@@ -19,7 +19,11 @@ class StockTransferForm
                 ->columns(3)
                 ->components([
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('from_warehouse_id')->relationship('fromWarehouse', 'name')->searchable()
                         ->required(),
                     Select::make('to_warehouse_id')->relationship('toWarehouse', 'name')->searchable()->required(),
@@ -27,7 +31,8 @@ class StockTransferForm
                     Select::make('status')->options([
                         'draft' => 'Draft', 'pending_approval' => 'Pending Approval', 'approved' => 'Approved',
                         'in_transit' => 'In Transit', 'completed' => 'Completed', 'cancelled' => 'Cancelled',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via the Post action.'),
                     Textarea::make('reason')->rows(2)->columnSpanFull(),
                 ]),
             Section::make('Items')

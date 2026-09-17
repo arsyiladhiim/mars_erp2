@@ -39,8 +39,18 @@ class ShareLink extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function accesses()
+    {
+        return $this->hasMany(ShareLinkAccess::class);
+    }
+
     public function isExpired(): bool
     {
         return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
+    public function isUsable(): bool
+    {
+        return ! $this->is_revoked && ! $this->isExpired();
     }
 }

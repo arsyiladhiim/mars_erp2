@@ -20,7 +20,11 @@ class PurchaseRequestForm
                 ->components([
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
                     Select::make('branch_id')->relationship('branch', 'name')->searchable(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('requester_id')->relationship('requester', 'name')->searchable()->required(),
                     Select::make('department_id')->relationship('department', 'name')->searchable(),
                     Select::make('cost_center_id')->relationship('costCenter', 'name')->searchable(),
@@ -29,7 +33,8 @@ class PurchaseRequestForm
                         'draft' => 'Draft', 'submitted' => 'Submitted', 'pending_approval' => 'Pending Approval',
                         'approved' => 'Approved', 'rejected' => 'Rejected', 'closed' => 'Closed',
                         'cancelled' => 'Cancelled',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via Submit for Approval / the approvals inbox.'),
                     Textarea::make('reason')->rows(2)->columnSpanFull(),
                 ]),
             Section::make('Requested Items')

@@ -2,6 +2,8 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Concerns\Approvable;
+use App\Models\Concerns\GeneratesDocumentNumber;
 use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Branch;
 use App\Models\Core\Company;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SalesOrder extends Model
 {
-    use HasAuditTrail, SoftDeletes;
+    use Approvable, GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'sales_orders';
 
@@ -58,5 +60,10 @@ class SalesOrder extends Model
     public function lines()
     {
         return $this->hasMany(SalesOrderLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'sales_order';
     }
 }

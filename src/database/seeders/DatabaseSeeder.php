@@ -15,6 +15,7 @@ use App\Models\Core\FiscalYear;
 use App\Models\Core\NumberSeries;
 use App\Models\Finance\BankAccount;
 use App\Models\Finance\ChartOfAccount;
+use App\Models\Finance\GlAccountMapping;
 use App\Models\Finance\SupplierInvoice;
 use App\Models\Finance\TaxCode;
 use App\Models\Helpdesk\Ticket;
@@ -151,6 +152,11 @@ class DatabaseSeeder extends Seeder
             ['4101', 'Sales Revenue', 'revenue', false, null],
             ['5101', 'Cost of Goods Sold', 'cogs', false, null],
             ['6101', 'Operating Expense', 'expense', false, null],
+            ['6102', 'Depreciation Expense', 'expense', false, null],
+            ['6103', 'Inventory Adjustment Gain/Loss', 'expense', false, null],
+            ['1501', 'Accumulated Depreciation', 'asset', false, null],
+            ['1502', 'Fixed Assets at Cost', 'asset', false, null],
+            ['6104', 'Gain/Loss on Asset Disposal', 'expense', false, null],
         ];
         $accounts = [];
         foreach ($coa as [$code, $name, $type, $isControl, $controlType]) {
@@ -159,6 +165,20 @@ class DatabaseSeeder extends Seeder
                 'is_control_account' => $isControl, 'control_type' => $controlType,
                 'is_tax_account' => str_starts_with($code, '22'),
             ]);
+        }
+
+        GlAccountMapping::ensureSeeded($company->id);
+        GlAccountMapping::where('company_id', $company->id)->update(['chart_of_account_id' => null]);
+        $glMap = [
+            'inventory' => '1301', 'gr_ir_clearing' => '1401', 'accounts_payable' => '2101',
+            'accounts_receivable' => '1201', 'sales_revenue' => '4101', 'cogs' => '5101',
+            'tax_output' => '2201', 'tax_input' => '2202', 'inventory_adjustment' => '6103',
+            'accumulated_depreciation' => '1501', 'depreciation_expense' => '6102',
+            'fixed_assets' => '1502', 'asset_disposal_gain_loss' => '6104',
+        ];
+        foreach ($glMap as $key => $code) {
+            GlAccountMapping::where('company_id', $company->id)->where('key', $key)
+                ->update(['chart_of_account_id' => $accounts[$code]->id]);
         }
 
         BankAccount::create([
@@ -315,5 +335,34 @@ class DatabaseSeeder extends Seeder
             'requester_id' => $admin->id, 'department_id' => $departments['IT']->id, 'category' => 'Hardware',
             'priority' => 'high', 'sla_hours' => 8, 'status' => 'open',
         ]);
+
+        // ── Number Series: the sample documents above were seeded with
+        // hand-picked "-000001" numbers rather than via NumberSeries::next(),
+        // so pre-register each series past that used number — otherwise the
+        // first real auto-generated document collides with the seed data.
+        // Always branch_id=null: GeneratesDocumentNumber uses one company-wide
+        // counter per document type (see its docblock for why per-branch
+        // counters are unsafe against a globally-unique `number` column).
+        foreach ([
+            ['purchase_request', 'PR'],
+            ['purchase_order', 'PO'],
+            ['goods_receipt', 'GR'],
+            ['supplier_invoice', 'SINV'],
+            ['sales_quotation', 'QUO'],
+            ['sales_order', 'SO'],
+            ['delivery', 'DO'],
+            ['customer_invoice', 'INV'],
+        ] as [$documentType, $prefix]) {
+            NumberSeries::updateOrCreate(
+                ['company_id' => $company->id, 'branch_id' => null, 'document_type' => $documentType],
+                [
+                    'prefix' => $prefix, 'format' => '{PREFIX}-{YEAR}-{NUMBER}', 'next_number' => 2,
+                    'padding' => 6, 'reset_yearly' => true, 'last_reset_year' => now()->year, 'is_active' => true,
+                ]
+            );
+        }
+
+        // ── RBAC: assign domain permissions to the non-super-admin roles ──
+        $this->call(RolePermissionSeeder::class);
     }
 }

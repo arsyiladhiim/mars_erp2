@@ -2,6 +2,7 @@
 
 namespace App\Models\Helpdesk;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Department;
 use App\Models\Master\BusinessPartner;
 use App\Models\User;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
+    use HasAuditTrail;
+
     protected $table = 'helpdesk_tickets';
 
     protected $fillable = [
@@ -18,6 +21,21 @@ class Ticket extends Model
     ];
 
     protected $casts = ['due_at' => 'datetime'];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $ticket) {
+            if ($ticket->sla_hours && ! $ticket->due_at) {
+                $ticket->due_at = now()->addHours((int) $ticket->sla_hours);
+            }
+        });
+
+        static::updating(function (self $ticket) {
+            if ($ticket->isDirty('sla_hours') && $ticket->sla_hours) {
+                $ticket->due_at = $ticket->created_at->copy()->addHours((int) $ticket->sla_hours);
+            }
+        });
+    }
 
     public function requester()
     {
@@ -47,5 +65,12 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany(TicketComment::class);
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->due_at !== null
+            && $this->due_at->isPast()
+            && ! in_array($this->status, ['resolved', 'closed'], true);
     }
 }

@@ -21,7 +21,12 @@ class FixedAssetsTable
                 TextColumn::make('acquisition_cost')->money('IDR'),
                 TextColumn::make('accumulated_depreciation')->money('IDR')->toggleable(),
                 TextColumn::make('assignedUser.name')->label('Assigned To')->toggleable(),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'in_use', 'capitalized' => 'success',
+                    'disposed' => 'danger',
+                    'under_maintenance', 'transferred' => 'warning',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FixedAssets\Schemas;
 
+use App\Models\Asset\FixedAsset;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -42,11 +43,23 @@ class FixedAssetForm
                         ->searchable()->label('Location'),
                     Select::make('assigned_user_id')->relationship('assignedUser', 'name')->searchable(),
                     Select::make('department_id')->relationship('department', 'name')->searchable(),
-                    Select::make('status')->options([
-                        'draft' => 'Draft', 'capitalized' => 'Capitalized', 'in_use' => 'In Use',
-                        'under_maintenance' => 'Under Maintenance', 'transferred' => 'Transferred',
-                        'disposed' => 'Disposed',
-                    ])->default('draft')->required(),
+                    Select::make('status')
+                        ->options(function (?FixedAsset $record) {
+                            $options = [
+                                'draft' => 'Draft', 'capitalized' => 'Capitalized', 'in_use' => 'In Use',
+                                'under_maintenance' => 'Under Maintenance', 'transferred' => 'Transferred',
+                            ];
+
+                            if ($record?->status === 'disposed') {
+                                $options['disposed'] = 'Disposed';
+                            }
+
+                            return $options;
+                        })
+                        ->default('draft')->required()
+                        ->disabled(fn (?FixedAsset $record) => $record?->status === 'disposed')
+                        ->dehydrated()
+                        ->helperText('Disposal is handled via the Dispose action, not this field.'),
                 ]),
         ]);
     }

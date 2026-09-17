@@ -20,7 +20,11 @@ class SupplierInvoiceForm
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
                     Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()
                         ->required()->label('Supplier'),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     TextInput::make('supplier_invoice_number')->label('Supplier\'s Invoice No.')->maxLength(100),
                     Select::make('purchase_order_id')->relationship('purchaseOrder', 'number')->searchable(),
                     Select::make('goods_receipt_id')->relationship('goodsReceipt', 'number')->searchable(),
@@ -31,7 +35,8 @@ class SupplierInvoiceForm
                         'draft' => 'Draft', 'pending_approval' => 'Pending Approval', 'approved' => 'Approved',
                         'posted' => 'Posted', 'partially_paid' => 'Partially Paid', 'paid' => 'Paid',
                         'cancelled' => 'Cancelled',
-                    ])->default('draft')->required(),
+                    ])->default('draft')->required()->disabled()->dehydrated()
+                        ->helperText('Managed via the Post action.'),
                 ]),
             Section::make('Lines')
                 ->components([

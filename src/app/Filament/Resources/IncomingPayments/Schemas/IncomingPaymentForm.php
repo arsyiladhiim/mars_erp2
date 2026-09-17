@@ -16,8 +16,14 @@ class IncomingPaymentForm
             Select::make('business_partner_id')->relationship('businessPartner', 'name')->searchable()->required()
                 ->label('Customer'),
             Select::make('customer_invoice_id')->relationship('customerInvoice', 'number')->searchable()
-                ->label('Applied to Invoice'),
-            TextInput::make('number')->required()->maxLength(50),
+                ->required()->label('Applied to Invoice'),
+            Select::make('bank_account_id')->relationship('bankAccount', 'account_name')->searchable()
+                ->required()->label('Bank / Cash Account'),
+            TextInput::make('number')->maxLength(50)
+                ->disabled(fn (string $operation) => $operation === 'create')
+                ->dehydrated(fn (string $operation) => $operation !== 'create')
+                ->required(fn (string $operation) => $operation === 'edit')
+                ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
             DatePicker::make('payment_date')->required(),
             Select::make('method')->options([
                 'cash' => 'Cash', 'bank_transfer' => 'Bank Transfer', 'giro' => 'Giro',
@@ -27,7 +33,8 @@ class IncomingPaymentForm
             TextInput::make('amount')->numeric()->prefix('Rp')->required(),
             Select::make('status')->options([
                 'draft' => 'Draft', 'posted' => 'Posted', 'cancelled' => 'Cancelled',
-            ])->default('draft')->required(),
+            ])->default('draft')->required()->disabled()->dehydrated()
+                ->helperText('Managed via the Post action.'),
         ])->columns(2);
     }
 }

@@ -20,7 +20,12 @@ class OutgoingPaymentsTable
                 TextColumn::make('payment_date')->date(),
                 TextColumn::make('method')->badge(),
                 TextColumn::make('amount')->money('IDR'),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'posted', 'approved' => 'success',
+                    'cancelled' => 'danger',
+                    'pending_approval' => 'warning',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

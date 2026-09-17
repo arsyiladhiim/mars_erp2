@@ -2,13 +2,15 @@
 
 namespace App\Models\Procurement;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rfq extends Model
 {
-    use SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'procurement_rfqs';
 
@@ -34,5 +36,10 @@ class Rfq extends Model
     public function lines()
     {
         return $this->hasMany(RfqLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'rfq';
     }
 }

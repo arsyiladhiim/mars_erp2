@@ -2,6 +2,8 @@
 
 namespace App\Models\Procurement;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\BusinessPartner;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SupplierQuotation extends Model
 {
-    use SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'procurement_supplier_quotations';
 
@@ -38,5 +40,10 @@ class SupplierQuotation extends Model
     public function lines()
     {
         return $this->hasMany(SupplierQuotationLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'supplier_quotation';
     }
 }

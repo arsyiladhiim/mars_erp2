@@ -2,6 +2,7 @@
 
 namespace App\Models\Finance;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
 use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Inventory\GoodsReceipt;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SupplierInvoice extends Model
 {
-    use HasAuditTrail, SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'finance_supplier_invoices';
 
@@ -59,5 +60,10 @@ class SupplierInvoice extends Model
     public function getOutstandingAttribute(): float
     {
         return (float) $this->grand_total - (float) $this->paid_amount;
+    }
+
+    public static function documentType(): string
+    {
+        return 'supplier_invoice';
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models\Procurement;
 
+use App\Models\Concerns\Approvable;
+use App\Models\Concerns\GeneratesDocumentNumber;
 use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Branch;
 use App\Models\Core\Company;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseOrder extends Model
 {
-    use HasAuditTrail, SoftDeletes;
+    use Approvable, GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'procurement_purchase_orders';
 
@@ -58,5 +60,10 @@ class PurchaseOrder extends Model
     public function lines()
     {
         return $this->hasMany(PurchaseOrderLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'purchase_order';
     }
 }

@@ -21,7 +21,11 @@ class DeliveriesTable
                 TextColumn::make('businessPartner.name')->label('Customer')->searchable(),
                 TextColumn::make('warehouse.name'),
                 TextColumn::make('delivery_date')->date()->sortable(),
-                TextColumn::make('status')->badge(),
+                TextColumn::make('status')->badge()->color(fn (string $state) => match ($state) {
+                    'posted' => 'success',
+                    'cancelled' => 'danger',
+                    default => 'gray',
+                }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

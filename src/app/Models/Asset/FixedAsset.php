@@ -2,6 +2,7 @@
 
 namespace App\Models\Asset;
 
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Core\Department;
 use App\Models\Master\Warehouse;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FixedAsset extends Model
 {
-    use SoftDeletes;
+    use HasAuditTrail, SoftDeletes;
 
     protected $table = 'asset_fixed_assets';
 

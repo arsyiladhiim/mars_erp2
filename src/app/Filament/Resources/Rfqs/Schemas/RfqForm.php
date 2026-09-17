@@ -19,7 +19,11 @@ class RfqForm
                 ->columns(3)
                 ->components([
                     Select::make('company_id')->relationship('company', 'name')->searchable()->required(),
-                    TextInput::make('number')->required()->maxLength(50),
+                    TextInput::make('number')->maxLength(50)
+                        ->disabled(fn (string $operation) => $operation === 'create')
+                        ->dehydrated(fn (string $operation) => $operation !== 'create')
+                        ->required(fn (string $operation) => $operation === 'edit')
+                        ->helperText(fn (string $operation) => $operation === 'create' ? 'Auto-generated on save.' : null),
                     Select::make('purchase_request_id')->relationship('purchaseRequest', 'number')->searchable(),
                     DatePicker::make('required_date'),
                     Select::make('status')->options([

@@ -2,6 +2,8 @@
 
 namespace App\Models\Inventory;
 
+use App\Models\Concerns\GeneratesDocumentNumber;
+use App\Models\Concerns\HasAuditTrail;
 use App\Models\Core\Company;
 use App\Models\Master\Warehouse;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockTransfer extends Model
 {
-    use SoftDeletes;
+    use GeneratesDocumentNumber, HasAuditTrail, SoftDeletes;
 
     protected $table = 'inventory_stock_transfers';
 
@@ -38,5 +40,10 @@ class StockTransfer extends Model
     public function lines()
     {
         return $this->hasMany(StockTransferLine::class);
+    }
+
+    public static function documentType(): string
+    {
+        return 'stock_transfer';
     }
 }
